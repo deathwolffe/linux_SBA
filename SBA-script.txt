@@ -1,0 +1,50 @@
+#!/bin/bash
+#Script Name: SBA_setup.sh
+#Script Purpose: to Install, Configure, and validate DNS, firewall, and SSH settings
+#Date Created: 11/06/2026 @ 20:52
+#Version: 1.1.0
+#Author(s): Kaylee Froats
+
+
+#---SSH SETUP---#
+##Subscript Name: SSH_setup
+##Subscript Purpose: to Install, Configure, and validate SSH settings
+##Date Created: 11/06/2026 @ 20:52
+##Version: 1.0.6
+
+#add test user(s) for SSH
+useradd foo
+
+dnf install openssh-server openssh-server openssh-clients
+
+#removes all lines containing settings to be changed
+echo "removing old SSH settings..."
+grep -v 'PermitRootLogin' /etc/ssh/sshd_config > ./temp_file.txt
+grep -v 'PubkeyAuthentication' ./temp_file.txt > /etc/ssh/sshd_config
+grep -v 'PermitRootLogin' /etc/ssh/sshd_config > ./temp_file.txt
+grep -v 'PasswordAuthentication' ./temp_file.txt > /etc/ssh/sshd_config
+
+#adds config lines into SSHD config file
+echo "configuring new SSH settings..."
+echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config
+echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
+
+#adds client public key to server for all users
+echo "Adding client public key..."
+##USER == lab
+mkdir /home/lab/.ssh/
+touch /home/lab/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC/C145+MwiuOWgIaEMDDH5omvfk6raOsTqFGBfxHoUzswqvgFGHOxlD40Q1aloSZZeovHUntf1v3SxmTVm+lF7fSb2hRfQ9Xn/MALQVB8e6A5HQY95m3AJhOMBYtNojORYOkjwwsj6dzoMrCInzhed2U1WFiYs2OhLxMf/QrpQt7Ty3uP8mbp1sBb/WFdD/LnW5u2moIBwFAErInoyybajAbO1kd/lcq6bBNEi1vFs+3tHtmj20ZUP/91D17S3yJs7EQooC65irmispdGOH3aW8ci5DokJ7/bWsDTG/FWYBQw5f+IdK1cvOWFKO+A1qm4FaZN/ZGoIhddXOI6sfE+/Ni9jiCGZi8LWdqyq1ggkLsOU9PrpChYMmHQr6vN5AwGPIG+Bt/pI1sFWDyTY7RCjFXOeZMAs/7+fWDRLZoKa32D4i/lpdqVWRhIMCUqtnWVPT8Sc6orfbJ72FDSRI/mkJnV+QrxNCayTUK2hFtWlxQ4kvOLxtMMTtq1w2jIPgvc= cst8246@froa0019-CLT.example50.lab" >>/home/lab/.ssh/authorized_keys
+
+##USER == foo
+mkdir /home/foo/.ssh/
+touch /home/foo/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC/C145+MwiuOWgIaEMDDH5omvfk6raOsTqFGBfxHoUzswqvgFGHOxlD40Q1aloSZZeovHUntf1v3SxmTVm+lF7fSb2hRfQ9Xn/MALQVB8e6A5HQY95m3AJhOMBYtNojORYOkjwwsj6dzoMrCInzhed2U1WFiYs2OhLxMf/QrpQt7Ty3uP8mbp1sBb/WFdD/LnW5u2moIBwFAErInoyybajAbO1kd/lcq6bBNEi1vFs+3tHtmj20ZUP/91D17S3yJs7EQooC65irmispdGOH3aW8ci5DokJ7/bWsDTG/FWYBQw5f+IdK1cvOWFKO+A1qm4FaZN/ZGoIhddXOI6sfE+/Ni9jiCGZi8LWdqyq1ggkLsOU9PrpChYMmHQr6vN5AwGPIG+Bt/pI1sFWDyTY7RCjFXOeZMAs/7+fWDRLZoKa32D4i/lpdqVWRhIMCUqtnWVPT8Sc6orfbJ72FDSRI/mkJnV+QrxNCayTUK2hFtWlxQ4kvOLxtMMTtq1w2jIPgvc= cst8246@froa0019-CLT.example50.lab" >>/home/foo/.ssh/authorized_keys
+
+##USER == root
+mkdir /root/.ssh/
+touch /root/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC/C145+MwiuOWgIaEMDDH5omvfk6raOsTqFGBfxHoUzswqvgFGHOxlD40Q1aloSZZeovHUntf1v3SxmTVm+lF7fSb2hRfQ9Xn/MALQVB8e6A5HQY95m3AJhOMBYtNojORYOkjwwsj6dzoMrCInzhed2U1WFiYs2OhLxMf/QrpQt7Ty3uP8mbp1sBb/WFdD/LnW5u2moIBwFAErInoyybajAbO1kd/lcq6bBNEi1vFs+3tHtmj20ZUP/91D17S3yJs7EQooC65irmispdGOH3aW8ci5DokJ7/bWsDTG/FWYBQw5f+IdK1cvOWFKO+A1qm4FaZN/ZGoIhddXOI6sfE+/Ni9jiCGZi8LWdqyq1ggkLsOU9PrpChYMmHQr6vN5AwGPIG+Bt/pI1sFWDyTY7RCjFXOeZMAs/7+fWDRLZoKa32D4i/lpdqVWRhIMCUqtnWVPT8Sc6orfbJ72FDSRI/mkJnV+QrxNCayTUK2hFtWlxQ4kvOLxtMMTtq1w2jIPgvc= cst8246@froa0019-CLT.example50.lab" >>/root/.ssh/authorized_keys
+
+echo "SSH configuration complete!"
