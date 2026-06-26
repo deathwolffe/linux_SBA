@@ -125,7 +125,9 @@ EOF
 
 systemctl restart named.service
 
+echo "waiting for services to load"
 sleep 20
 #---VERIFICATION---#
 iptables -L --line-numbers
 dig ns1.algon.lab
+cat /etc/named.conf
