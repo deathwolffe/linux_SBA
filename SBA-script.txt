@@ -86,7 +86,6 @@ iptables -L
 #Install DNS Utilities
 dnf install bind bind-utils -y
 
-###ADD allow-query     { localhost; 172.16.30.50; };
 #Configure DNS
 sed -i 's/listen-on port 53 { 127.0.0.1; };/listen-on port 53 { 127.0.0.1; 172.16.30.50; };/g' /etc/named.conf
 sed -i 's/allow-query     { localhost; };/allow-query     { localhost; 172.16.0.0\/16; };/g' /etc/named.conf
